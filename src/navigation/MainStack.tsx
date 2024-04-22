@@ -1,9 +1,24 @@
-import {createStackNavigator} from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  StackNavigationProp,
+} from '@react-navigation/stack';
 import {ROUTE_NAMES} from '../config';
-import React from 'react';
 import Landing from '../screens/Landing';
+import Main from '../screens/Main';
 
-const Stack = createStackNavigator();
+export type RootStackParamsList = {
+  Landing: undefined;
+  Main: undefined;
+};
+
+export interface ILandingProps {
+  navigation: StackNavigationProp<RootStackParamsList, ROUTE_NAMES.LANDING>;
+}
+export interface IMainProps {
+  navigation: StackNavigationProp<RootStackParamsList, ROUTE_NAMES.MAIN>;
+}
+
+const Stack = createStackNavigator<RootStackParamsList>();
 
 const MainStack = () => {
   return (
@@ -11,6 +26,11 @@ const MainStack = () => {
       <Stack.Screen
         name={ROUTE_NAMES.LANDING}
         component={Landing}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name={ROUTE_NAMES.MAIN}
+        component={Main}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

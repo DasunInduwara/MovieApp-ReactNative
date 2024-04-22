@@ -1,10 +1,10 @@
 export enum ROUTE_NAMES{
-    LANDING = 'LANDING',
-    MAIN = 'MAIN',
-    VIEW = 'VIEW'
+    LANDING = 'Landing',
+    MAIN = 'Main',
 }
 
 export const theme = {
-    primery: '#000000',
+    primery: '#FCCE67',
+    black: '#000',
     white: '#fff'
 }
