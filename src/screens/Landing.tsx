@@ -2,7 +2,6 @@ import {Alert, StyleSheet, Text, View, useWindowDimensions} from 'react-native';
 import {ROUTE_NAMES, theme} from '../config';
 import React from 'react';
 import LottieView from 'lottie-react-native';
-import {runOnJS} from 'react-native-reanimated';
 import {ILandingProps} from '../navigation/MainStack';
 
 interface ILanding extends ILandingProps {}
