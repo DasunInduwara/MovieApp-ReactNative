@@ -6,5 +6,6 @@ export enum ROUTE_NAMES{
 export const theme = {
     primery: '#FCCE67',
     black: '#000',
-    white: '#fff'
+    white: '#fff',
+    placeholder: '#649fcc',
 }
