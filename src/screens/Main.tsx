@@ -21,13 +21,14 @@ import {FlatGrid} from 'react-native-super-grid';
 interface IMain extends IMainProps {}
 
 const Main: React.FC<IMain> = props => {
+  const {navigation} = props;
   const {width, height} = useWindowDimensions();
   const {top, bottom} = useSafeAreaInsets();
 
   const [searchText, setSearchText] = useState('');
   const [showClear, setShowClear] = useState(false);
   const [searchResults, setSearchResults] = useState<ApiTypes.SearchResponse>();
-  const [loading, setLoading] = useState(true); // set loading to true initially
+  const [loading, setLoading] = useState(true);
 
   const handleSearch = () => {
     getMovies(searchText);
@@ -41,6 +42,10 @@ const Main: React.FC<IMain> = props => {
   };
 
   const handleItemPress = () => {};
+
+  const handleMapBtn = () => {
+    navigation.navigate('Map');
+  };
 
   useEffect(() => {
     getMovies(searchText.length == 0 ? 'king' : searchText);
@@ -57,8 +62,6 @@ const Main: React.FC<IMain> = props => {
       });
 
       setSearchResults(response.data);
-
-      // console.log(response.data); // move console.log inside then block
     } catch (error) {
       Toast.show({
         type: 'error',
@@ -67,7 +70,7 @@ const Main: React.FC<IMain> = props => {
     } finally {
       setTimeout(() => {
         setLoading(false);
-      }, 500);
+      }, 800);
     }
   };
 
@@ -82,10 +85,12 @@ const Main: React.FC<IMain> = props => {
       ]}>
       <View style={styles.header}>
         <Text style={styles.logoText}>{'CINEMA'}</Text>
-        <Image
-          source={require('../assets/icons/menu.png')}
-          style={styles.menuIcon}
-        />
+        <TouchableOpacity onPress={handleMapBtn}>
+          <Image
+            source={require('../assets/icons/map.png')}
+            style={styles.mapIcon}
+          />
+        </TouchableOpacity>
       </View>
       <View style={styles.searchContainer}>
         <TextInput
@@ -173,7 +178,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'left',
   },
-  menuIcon: {
+  mapIcon: {
     width: 28,
     height: 28,
     tintColor: theme.primery,

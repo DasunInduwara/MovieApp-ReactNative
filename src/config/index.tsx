@@ -1,6 +1,7 @@
 export enum ROUTE_NAMES{
     LANDING = 'Landing',
     MAIN = 'Main',
+    MAP = 'Map',
 }
 
 export const theme = {

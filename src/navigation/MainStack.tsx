@@ -5,10 +5,12 @@ import {
 import {ROUTE_NAMES} from '../config';
 import Landing from '../screens/Landing';
 import Main from '../screens/Main';
+import Map from '../screens/Map';
 
 export type RootStackParamsList = {
   Landing: undefined;
   Main: undefined;
+  Map: undefined;
 };
 
 export interface ILandingProps {
@@ -16,6 +18,9 @@ export interface ILandingProps {
 }
 export interface IMainProps {
   navigation: StackNavigationProp<RootStackParamsList, ROUTE_NAMES.MAIN>;
+}
+export interface IMapProps {
+  navigation: StackNavigationProp<RootStackParamsList, ROUTE_NAMES.MAP>;
 }
 
 const Stack = createStackNavigator<RootStackParamsList>();
@@ -31,6 +36,11 @@ const MainStack = () => {
       <Stack.Screen
         name={ROUTE_NAMES.MAIN}
         component={Main}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name={ROUTE_NAMES.MAP}
+        component={Map}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

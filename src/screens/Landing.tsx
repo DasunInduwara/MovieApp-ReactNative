@@ -1,4 +1,4 @@
-import {Alert, StyleSheet, Text, View, useWindowDimensions} from 'react-native';
+import { StyleSheet, Text, View, useWindowDimensions} from 'react-native';
 import {ROUTE_NAMES, theme} from '../config';
 import React from 'react';
 import LottieView from 'lottie-react-native';
