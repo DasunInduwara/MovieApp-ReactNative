@@ -3,10 +3,13 @@ import {
   Text,
   View,
   Image,
-  Pressable,
+  Keyboard,
   TouchableOpacity,
   TextInput,
   useWindowDimensions,
+  Platform,
+  PermissionsAndroid,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {theme} from '../config';
@@ -17,6 +20,7 @@ import Toast from 'react-native-toast-message';
 import LottieView from 'lottie-react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {FlatGrid} from 'react-native-super-grid';
+import RNFetchBlob from 'rn-fetch-blob';
 
 interface IMain extends IMainProps {}
 
@@ -30,9 +34,65 @@ const Main: React.FC<IMain> = props => {
   const [searchResults, setSearchResults] = useState<ApiTypes.SearchResponse>();
   const [loading, setLoading] = useState(true);
 
+  const checkPermission = async () => {
+    if (Platform.OS === 'ios') {
+      console.log('IOS');
+
+      downloadImage();
+    } else {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'Storage access permistion',
+            message: 'This app needs access to your storage to download Photos',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          // Once user grant the permission start downloading
+          downloadImage();
+        } else {
+          // If permission denied then show alert
+          Alert.alert('Error', 'Storage Permission Not Granted');
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+  };
+
+  const downloadImage = async () => {
+    RNFetchBlob.config({
+      addAndroidDownloads: {
+        useDownloadManager: true,
+        notification: true,
+        path: RNFetchBlob.fs.dirs.DownloadDir + '/image_name.jpg',
+        description: 'Image',
+      },
+      IOSBackgroundTask: true,
+      indicator: true,
+      fileCache: true,
+    })
+      .fetch(
+        'GET',
+        'https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg',
+      )
+      .then(res => {
+        Toast.show({type: 'success', text1: 'Downloaded'});
+        console.log('The file saved to ', res.path());
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
   const handleSearch = () => {
     getMovies(searchText);
     setShowClear(true);
+    Keyboard.dismiss();
   };
 
   const handleClear = () => {
@@ -40,8 +100,6 @@ const Main: React.FC<IMain> = props => {
     setShowClear(false);
     getMovies('king');
   };
-
-  const handleItemPress = () => {};
 
   const handleMapBtn = () => {
     navigation.navigate('Map');
@@ -79,7 +137,7 @@ const Main: React.FC<IMain> = props => {
       style={[
         styles.mainContainer,
         {
-          paddingTop: top + 8,
+          paddingTop: top + 5,
           paddingBottom: bottom,
         },
       ]}>
@@ -99,7 +157,10 @@ const Main: React.FC<IMain> = props => {
           placeholderTextColor={theme.black}
           autoCorrect={false}
           value={searchText}
-          onChangeText={query => setSearchText(query)}
+          onChangeText={function (query) {
+            setShowClear(false);
+            return setSearchText(query);
+          }}
         />
 
         <View style={styles.clearBtnContainer}>
@@ -135,10 +196,10 @@ const Main: React.FC<IMain> = props => {
               itemDimension={120}
               data={searchResults.Search}
               style={styles.gridView}
-              nestedScrollEnabled={true} // Set nestedScrollEnabled to true
+              nestedScrollEnabled={true}
               renderItem={({item}) => (
                 <View style={styles.gridItem}>
-                  <TouchableOpacity onPress={handleItemPress}>
+                  <TouchableOpacity onPress={checkPermission}>
                     <Image source={{uri: item.Poster}} style={styles.poster} />
                     <Text style={styles.title} numberOfLines={1}>
                       {item.Title}
@@ -189,7 +250,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.primery,
     borderRadius: 12,
     paddingHorizontal: 10,
-    paddingVertical: 10,
+    height: 45,
     marginTop: 20,
   },
   searchInput: {
@@ -209,7 +270,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   gridItem: {
-    marginHorizontal: 5,
     marginBottom: 5,
     borderRadius: 15,
   },
